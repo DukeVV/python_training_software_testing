@@ -1,71 +1,23 @@
 
-class GroupHelper:
-
-    def __init__(self, app):
-        self.app = app
+from sys import maxsize
 
 
-    def return_to_group_page(self):
-        wd = self.app.wd
-        wd.find_element_by_link_text("group page").click()
+class Group:
 
-    def create(self, group):
-        wd = self.app.wd
-        self.open_group_page()
-        # init group creation
-        wd.find_element_by_name("new").click()
-        self.fill_group_form(group)
-        # submit group creation
-        wd.find_element_by_name("submit").click()
-        self.return_to_group_page()
+    def __init__(self, name=None, header=None, footer=None, id = None):
+        self.name = name
+        self.header = header
+        self.footer = footer
+        self.id = id
 
-    def open_group_page(self):
-        wd = self.app.wd
-        wd.find_element_by_link_text("groups").click()
+    def __repr__(self):
+        return "%s:%s" % (self.id, self.name)
 
+    def __eq__(self, other):
+        return (self.id is None or other.id is None or self.id == other.id) and self.name == other.name
 
-    def delete_first_group(self):
-        wd = self.app.wd
-        self.open_group_page()
-        self.select_first_group()
-        # submit deletion
-        wd.find_element_by_name("delete").click()
-
-    def select_first_group(self):
-        wd = self.app.wd
-        wd.find_element_by_name("selected[]").click()
-
-    def edit_first_group(self, group):
-        wd = self.app.wd
-        self.open_group_page()
-        self.select_first_group()
-        # submit edit group
-        wd.find_element_by_name("edit").click()
-        self.fill_group_form(group)
-        # submit edit
-        wd.find_element_by_name("update").click()
-        self.return_to_group_page()
-
-    def fill_group_form(self, group):
-        wd = self.app.wd
-        self.change_filed_value("group_name", group.name)
-        self.change_filed_value("group_header", group.header)
-        self.change_filed_value("group_footer", group.footer)
-
-    def change_filed_value(self, field_name, text):
-        wd = self.app.wd
-        if text is not None:
-            wd.find_element_by_name(field_name).click()
-            wd.find_element_by_name(field_name).clear()
-            wd.find_element_by_name(field_name).send_keys(text)
-
-    def modify_first_group(self, new_group_data):
-        wd = self.app.wd
-        self.open_group_page()
-        self.select_first_group()
-        # open modification form
-        wd.find_element_by_name("edit").click()
-        self.fill_group_form(new_group_data)
-        #submit modification
-        wd.find_element_by_name("update").click()
-        self.return_to_group_page()
+    def id_or_max(self):
+        if self.id:
+            return int(self.id)
+        else:
+            return maxsize
